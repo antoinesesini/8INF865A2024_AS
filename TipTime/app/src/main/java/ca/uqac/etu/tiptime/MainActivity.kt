@@ -19,6 +19,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,10 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -51,6 +55,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Switch
+import androidx.compose.ui.res.painterResource
 import ca.uqac.etu.tiptime.ui.theme.TipTimeTheme
 import java.text.NumberFormat
 
@@ -83,7 +88,8 @@ fun TipTimeLayout() {
         modifier = Modifier
             .statusBarsPadding()
             .padding(horizontal = 40.dp)
-            .safeDrawingPadding(),
+            .safeDrawingPadding()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -103,7 +109,9 @@ fun TipTimeLayout() {
             onValueChange = {amountInput=it},
             modifier = Modifier
             .padding(bottom = 32.dp)
-            .fillMaxWidth())
+            .fillMaxWidth(),
+            leadingIcon = R.drawable.money,
+        )
         EditNumberField(
             label = R.string.how_was_the_service,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -112,7 +120,9 @@ fun TipTimeLayout() {
             ),
             value = tipInput,
             onValueChange = {tipInput=it},
-            modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth())
+            modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth(),
+            leadingIcon = R.drawable.percent,
+        )
         RoundTheTipRow(
             roundUp = roundUp,
             onRoundUpChanged = { roundUp = it },
@@ -138,14 +148,15 @@ fun TipTimeLayout() {
  */
 
 @Composable
-fun EditNumberField(@StringRes label: Int, keyboardOptions: KeyboardOptions, value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
+fun EditNumberField(@StringRes label: Int, @DrawableRes leadingIcon: Int, keyboardOptions: KeyboardOptions, value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     TextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
         label = { Text(stringResource(label))},
         singleLine = true,
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        leadingIcon = { Icon(painter = painterResource(id = leadingIcon), null) },
     )
 }
 
