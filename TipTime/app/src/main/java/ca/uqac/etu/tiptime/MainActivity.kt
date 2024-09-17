@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package ca.uqac.etu.tiptime
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,6 +33,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -72,7 +78,9 @@ fun TipTimeLayout() {
                 .padding(bottom = 16.dp, top = 40.dp)
                 .align(alignment = Alignment.Start)
         )
-        EditNumberField(modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth())
+        EditNumberField(modifier = Modifier
+            .padding(bottom = 32.dp)
+            .fillMaxWidth())
         Text(
             text = stringResource(R.string.tip_amount, "$0.00"),
             style = MaterialTheme.typography.displaySmall
@@ -81,11 +89,25 @@ fun TipTimeLayout() {
     }
 }
 
+/**
+ *
+ * Lors de la composition initiale, value dans TextField est défini sur la valeur initiale, qui est une chaîne vide.
+ *
+ * Lorsque l'utilisateur saisit du texte dans le champ de texte, le rappel lambda onValueChange est appelé, la fonction lambda s'exécute, et la valeur amountInput.value est définie sur la valeur mise à jour dans le champ de texte.
+ *
+ * amountInput correspond à l'état modifiable suivi par Compose. La recomposition est planifiée. La fonction modulable EditNumberField() est recomposée. Comme vous utilisez remember { },, la modification survit à la recomposition. C'est pourquoi l'état n'est pas réinitialisé et remplacé par "".
+ *
+ * L'élément value du champ de texte est défini sur la valeur mémorisée pour amountInput. Le champ de texte se recompose (comme illustré à l'écran avec une nouvelle valeur).
+ */
+
 @Composable
 fun EditNumberField(modifier: Modifier = Modifier) {
+    var amountInput by remember { mutableStateOf("") }
     TextField(
-        value = "",
-        onValueChange = {},
+        value = amountInput,
+        onValueChange = {
+            amountInput = it
+        },
         modifier = modifier
     )
 }
